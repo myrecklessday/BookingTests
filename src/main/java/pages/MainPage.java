@@ -1,31 +1,66 @@
 package pages;
 
 import base.PageBase;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
+
+import java.util.List;
 
 public class MainPage extends PageBase {
     public MainPage(WebDriver driver){
         super(driver);
     }
 
-    @FindBy(id = "language_selector")
+    @FindBy(css = ".uc_language")
     private WebElement languageSelector;
 
-    @FindBy(id = "currency_selector")
+    @FindBy(xpath = "//li[contains(@class, 'uc_language')]//img")
+    private WebElement languageImageTitle;
+
+    @FindBy(css = ".uc_currency")
     private WebElement currencySelector;
 
-    @FindBy(xpath = "//a[contains(@class, 'no_target_blank')]//span[@class = 'seldescription' and contains(text(), 'Русский')]")
-    private WebElement languageName;
+    @FindBy(xpath = "//li[contains(@class, 'uc_currency')]//a")
+    private WebElement currencyChosenSymbol;
+
+    @FindAll({@FindBy(xpath = "//span[@class = 'lp-postcard-avg-price-value']")})
+    private List <WebElement> recommendedDirectionsPrices;
+
+    @FindAll({@FindBy(xpath = "//div[contains(@class, 'bui-card__content')]/p")})
+    private List <WebElement> housesRecommendationsPrices;
+
+    private String languageName = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
+    private String currencyName = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
 
     public void changeLanguage(String language){
         languageSelector.click();
-        languageName.sendKeys(language);
+        String languageItem = languageName.replace("LanguageName", language);
+        searchElement(By.xpath(languageItem)).click();
     }
 
-    public void changeCurrency(){
+    public String getLanguageImageTitle(){
+        return languageImageTitle.getAttribute("alt");
+    }
+
+    public void changeCurrency(String currency){
         currencySelector.click();
+        String currencyNameItem = currencyName.replace("CurrencyName", currency);
+        searchElement(By.xpath(currencyNameItem)).click();
     }
 
+    public String getSelectedCurrencySymbol(){
+        return currencyChosenSymbol.getText();
+    }
+
+    public boolean isRecommendedDirectionsCurrencyCorrect(String currencySymbol){
+        for (WebElement recommendedDirectionPrice:recommendedDirectionsPrices) {
+            if (!recommendedDirectionPrice.getText().contains(currencySymbol)){
+                return false;
+            }
+        }
+        return true;
+    }
 }
