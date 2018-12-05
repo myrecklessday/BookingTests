@@ -4,6 +4,7 @@ import base.PageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 
@@ -32,8 +33,12 @@ public class MainPage extends PageBase {
     @FindAll({@FindBy(xpath = "//div[contains(@class, 'bui-card__content')]/p")})
     private List <WebElement> housesRecommendationsPrices;
 
+    @FindBy(id = "booking-footer")
+    private WebElement footer;
+
     private String languageName = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
     private String currencyName = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
+    private String learnMoreCountryName = "//li[contains(@class, 'dcbi-country')]/a[contains(text(), 'LearnMoreCountryName')]";
 
     public void changeLanguage(String language){
         languageSelector.click();
@@ -63,4 +68,16 @@ public class MainPage extends PageBase {
         }
         return true;
     }
+
+    private void scrollDown(){
+        new Actions(driver).moveToElement(footer).build().perform();
+        int i = 0;
+    }
+
+    public void goToPopularCitiesPage(String countryName){
+        scrollDown();
+        String learnMoreCountryNameItem = learnMoreCountryName.replace("LearnMoreCountryName", countryName);
+        searchElement(By.xpath(learnMoreCountryNameItem)).click();
+    }
+
 }
