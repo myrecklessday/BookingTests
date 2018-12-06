@@ -1,9 +1,8 @@
-import com.google.common.collect.ImmutableList;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import org.testng.collections.Lists;
 import pages.CountryInfoPage;
 import pages.MainPage;
 
@@ -19,6 +18,8 @@ public class TestsBooking {
     @BeforeClass
     public void start() {
         driver = new ChromeDriver();
+//        driver = new FirefoxDriver();
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         mainPage = new MainPage(driver);
         countryInfoPage = new CountryInfoPage(driver);
@@ -56,10 +57,20 @@ public class TestsBooking {
      */
     @Test
     public void checkSpainPopularCities(){
-        List<String> expectedPopularCities = ImmutableList.of("Барселона", "Валенсия", "Мадрид");
+        List<String> expectedPopularCities = Arrays.asList("Барселона", "Валенсия", "Мадрид");
+
         mainPage.goToPopularCitiesPage("Испания");
         Assert.assertTrue(countryInfoPage.getPopularCities().containsAll(expectedPopularCities), "Popular cities " +
                 "of chosen country should be " + expectedPopularCities);
+    }
+
+    /**
+     * 3. Я могу увидеть на главной странице результат предыдущего поиска.
+     */
+    @Test
+    public void search(){
+        mainPage.search("Барселона", "2018-12-29", "2019-01-12", "2", "4", "3");
+        int i = 0;
     }
 
     @DataProvider
@@ -69,6 +80,17 @@ public class TestsBooking {
                 {"Катарский риал", "QAR"}
         };
     }
+
+//    private List<String> buildExpectedPopularCities(){
+//         return Collections.unmodifiableList("Барселона", "Валенсия", "Мадрид");
+//    }
+//
+//    @DataProvider
+//    public Object[][] checkSpainPopularCitiesDataProvider(){
+//        return new Object[][] {
+//                {buildExpectedPopularCities()}
+//        };
+//    }
 
 
 }
