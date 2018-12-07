@@ -3,13 +3,11 @@ package pages;
 import base.PageBase;
 import elements.SearchField;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
@@ -39,17 +37,11 @@ public class MainPage extends PageBase {
     @FindBy(id = "booking-footer")
     private WebElement footer;
 
-    @FindBy(css = ".xp__fieldset")
-    private WebElement searchContainer_locator;
+    @FindBy(className = "sh-postcard-content-title")
+    private WebElement historyText;
 
-    @FindBy(id = "no_rooms")
-    private WebElement roomsNumber_locator;
-
-    @FindBy(id = "group_adults")
-    private WebElement adultsNumber_locator;
-
-    @FindBy(id = "group_children")
-    private WebElement childrenNumber_locator;
+    @FindBy(xpath = "//td[@class = 'sh-postcard-dates']/a")
+    private WebElement historyDates;
 
     private String languageName = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
     private String currencyName = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
@@ -86,7 +78,6 @@ public class MainPage extends PageBase {
 
     private void scrollDown(){
         new Actions(driver).moveToElement(footer).build().perform();
-        int i = 0;
     }
 
     public void goToPopularCitiesPage(String countryName){
@@ -96,24 +87,16 @@ public class MainPage extends PageBase {
     }
 
     public void search(String place, String arrivalDate, String departureDate, String rooms, String adults, String children) {
-        SearchField searchField = new SearchField(searchContainer_locator);
+        SearchField searchField = new SearchField(driver);
+        searchField.initSearch(place, arrivalDate, departureDate, rooms, adults, children);
+    }
 
-        if (roomsNumber_locator.getTagName().contentEquals("select")) {
-            Select roomsDropdown = new Select(roomsNumber_locator);
-            roomsDropdown.selectByVisibleText(rooms);
-            Select adultsDropdown = new Select(adultsNumber_locator);
-            adultsDropdown.selectByVisibleText(adults);
-            Select childrenDropdown = new Select(childrenNumber_locator);
-            childrenDropdown.selectByVisibleText(children);
-        } else {
+    public String getHistoryText(){
+        return historyText.getText();
+    }
 
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("var rooms_input = document.getElementById('no_rooms'); rooms_input.value = arguments[0];" +
-                            "var adults_input = document.getElementById('group_adults'); adults_input.value = arguments[1];" +
-                            "var children_input = document.getElementById('group_children'); children_input.value = arguments[2];",
-                    rooms, adults, children);
-            searchField.initSearch(place, arrivalDate, departureDate, rooms, adults, children);
-        }
+    public String getHistoryDates(){
+        return historyDates.getText();
     }
 
 }

@@ -6,13 +6,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import java.util.List;
-
 public class SearchField {
-    private WebElement selfElement;
+    private WebDriver driver;
 
-    public SearchField(WebElement selfElement){
-        this.selfElement = selfElement;
+    public SearchField(WebDriver driver){
+        this.driver = driver;
     }
 
     private static By searchButton_locator = By.className("sb-searchbox__button");
@@ -27,47 +25,41 @@ public class SearchField {
 
 
     private void chooseDates(String arrivalDate, String departureDate){
-        selfElement.findElement(datesField_locator).click();
-        selfElement.findElement(By.xpath(dates_locator.replace("Date", arrivalDate))).click();
-        selfElement.findElement(By.xpath(dates_locator.replace("Date", departureDate))).click();
+        driver.findElement(datesField_locator).click();
+        driver.findElement(By.xpath(dates_locator.replace("Date", arrivalDate))).click();
+        driver.findElement(By.xpath(dates_locator.replace("Date", departureDate))).click();
 
     }
 
     private void chooseGuests(String rooms, String adults, String children){
-        selfElement.findElement(guestsField_locator).click();
-//        selfElement.findElement(roomsNumber_locator).click();
-//        Select roomsDropdown = new Select(selfElement.findElement(roomsNumber_locator));
-//        roomsDropdown.selectByVisibleText(rooms);
+        driver.findElement(guestsField_locator).click();
 
-//        selfElement.findElement(roomsNumber_locator).sendKeys(rooms);
-
-//        Select adultsDropdown = new Select(selfElement.findElement(adultsNumber_locator));
-//        adultsDropdown.selectByVisibleText(adults);
-
-//        selfElement.findElement(adultsNumber_locator).sendKeys(adults);
-
-//        Select childrenDropdown = new Select(selfElement.findElement(childrenNumber_locator));
-//        childrenDropdown.selectByVisibleText(children);
-
-//        selfElement.findElement(childrenNumber_locator).sendKeys(children);
-
-//        JavascriptExecutor js = (JavascriptExecutor)driver;
-//        js.executeScript("var rooms_input = document.getElementById('no_rooms'); rooms_input.value = arguments[0];" +
-//                "var adults_input = document.getElementById('group_adults'); adults_input.value = arguments[1];" +
-//                "var children_input = document.getElementById('group_children'); children_input.value = arguments[2];",
-//                rooms, adults, children);
-
-//        selfElement.findElement(adultsNumber_locator).click();
-
-//        selfElement.findElement(childrenNumber_locator).click();
-
+        //elements for choosing quantity can have type select or type input range after tests launch
+        if (driver.findElement(roomsNumber_locator).getTagName().contentEquals("select")) {
+            Select roomsDropdown = new Select(driver.findElement(roomsNumber_locator));
+            roomsDropdown.selectByVisibleText(rooms);
+            Select adultsDropdown = new Select(driver.findElement(adultsNumber_locator));
+            adultsDropdown.selectByVisibleText(adults);
+            Select childrenDropdown = new Select(driver.findElement(childrenNumber_locator));
+            childrenDropdown.selectByVisibleText(children);
+        } else {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("var rooms_input = document.getElementById('no_rooms'); rooms_input.value = arguments[0];" +
+                            "var adults_input = document.getElementById('group_adults'); adults_input.value = arguments[1];" +
+                            "var children_input = document.getElementById('group_children'); children_input.value = arguments[2];",
+                    rooms, adults, children);
+        }
     }
 
     public void initSearch(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
-        selfElement.findElement(searchField_locator).sendKeys(place);
+        WebElement searchField = driver.findElement(searchField_locator);
+        if (!searchField.getAttribute("value").equals("")){
+            searchField.clear();
+        }
+        searchField.sendKeys(place);
         chooseDates(arrivalDate, departureDate);
-        selfElement.findElement(guestsField_locator).click();
-        selfElement.findElement(searchButton_locator).click();
+        chooseGuests(rooms, adults, children);
+        driver.findElement(searchButton_locator).click();
     }
 
 }

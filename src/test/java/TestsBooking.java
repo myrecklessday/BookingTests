@@ -1,10 +1,11 @@
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.CountryInfoPage;
 import pages.MainPage;
+import pages.SearchHotelsResultsPage;
+import util.TestUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,15 +15,20 @@ public class TestsBooking {
     private WebDriver driver;
     private MainPage mainPage;
     private CountryInfoPage countryInfoPage;
+    private SearchHotelsResultsPage searchHotelsResultsPage;
+
+    private static TestUtils testUtils;
 
     @BeforeClass
     public void start() {
         driver = new ChromeDriver();
-//        driver = new FirefoxDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         mainPage = new MainPage(driver);
         countryInfoPage = new CountryInfoPage(driver);
+        searchHotelsResultsPage = new SearchHotelsResultsPage(driver);
+
+        testUtils = new TestUtils();
     }
 
     @BeforeMethod
@@ -67,10 +73,28 @@ public class TestsBooking {
     /**
      * 3. Я могу увидеть на главной странице результат предыдущего поиска.
      */
-    @Test
-    public void search(){
-        mainPage.search("Барселона", "2018-12-29", "2019-01-12", "2", "4", "3");
-        int i = 0;
+    @Test(dataProvider = "searchDataProvider")
+    public void search(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
+
+        String searchArrivalDay = testUtils.getArrivalDay(arrivalDate);
+        String searchDepartureDay = testUtils.getDepartureDay(departureDate);
+
+        mainPage.search(place, arrivalDate, departureDate, rooms, adults, children);
+        Assert.assertTrue(searchHotelsResultsPage.getSearchRoomsNumber().contains(rooms),
+                "Quantity of searched rooms number should be " + rooms);
+        Assert.assertTrue(searchHotelsResultsPage.getSearchAdultsNumber().contains(adults),
+                "Quantity of searched adults number should be " + adults);
+        Assert.assertTrue(searchHotelsResultsPage.getSearchChildrenNumber().contains(children),
+                "Quantity of searched children number should be " + children);
+        
+        searchHotelsResultsPage.returnToMainPage();
+        Assert.assertEquals(mainPage.getHistoryText(), "Еще хотите побывать в городе " + place + "?",
+                "Place in search history should be " + place);
+        Assert.assertTrue(mainPage.getHistoryDates().contains(searchArrivalDay),
+                "Arrival date in search history should be " + searchArrivalDay);
+        Assert.assertTrue(mainPage.getHistoryDates().contains(searchDepartureDay),
+                "Departure date in search history should be " + searchDepartureDay);
+
     }
 
     @DataProvider
@@ -78,6 +102,14 @@ public class TestsBooking {
         return new Object[][] {
                 {"Польский злотый", "zł"},
                 {"Катарский риал", "QAR"}
+        };
+    }
+
+    @DataProvider
+    public Object[][] searchDataProvider(){
+        return new Object[][] {
+                {"Барселона", "2018-12-29", "2019-01-12", "3", "6", "2"},
+                {"Лос-Анджелес", "2018-12-30", "2019-01-09", "1", "8", "3"}
         };
     }
 
