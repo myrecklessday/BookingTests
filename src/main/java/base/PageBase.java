@@ -13,7 +13,7 @@ public class PageBase {
         this.driver = driver;
     }
 
-    public WebElement searchElement(By by){
+    protected WebElement searchElement(By by){
         return driver.findElement(by);
     }
 }

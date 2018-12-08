@@ -17,8 +17,6 @@ public class TestsBooking {
     private CountryInfoPage countryInfoPage;
     private SearchHotelsResultsPage searchHotelsResultsPage;
 
-    private static TestUtils testUtils;
-
     @BeforeClass
     public void start() {
         driver = new ChromeDriver();
@@ -27,16 +25,14 @@ public class TestsBooking {
         mainPage = new MainPage(driver);
         countryInfoPage = new CountryInfoPage(driver);
         searchHotelsResultsPage = new SearchHotelsResultsPage(driver);
-
-        testUtils = new TestUtils();
     }
 
     @BeforeMethod
     public void getMainPage(){
         driver.get("https://www.booking.com/");
-        if (!mainPage.getLanguageImageTitle().contains("русском")) {
+        if (!mainPage.getLanguageTitle().equals("ru")) {
             mainPage.changeLanguage("Русский");
-            Assert.assertTrue(mainPage.getLanguageImageTitle().contains("русском"), "Image title should contain" +
+            Assert.assertEquals(mainPage.getLanguageTitle(), "ru", "Image title should contain" +
                     "chosen language name");
         }
     }
@@ -61,13 +57,11 @@ public class TestsBooking {
     /**
      * 2. Я могу узнать, что в Испании среди популярных городов есть Барселона, Мадрид и Валенсия.
      */
-    @Test
-    public void checkSpainPopularCities(){
-        List<String> expectedPopularCities = Arrays.asList("Барселона", "Валенсия", "Мадрид");
-
-        mainPage.goToPopularCitiesPage("Испания");
-        Assert.assertTrue(countryInfoPage.getPopularCities().containsAll(expectedPopularCities), "Popular cities " +
-                "of chosen country should be " + expectedPopularCities);
+    @Test(dataProvider = "checkPopularCitiesDataProvider")
+    public void checkPopularCities(String country, List<String> expectedCities){
+        mainPage.goToPopularCitiesPage(country);
+        Assert.assertTrue(countryInfoPage.getPopularCities().containsAll(expectedCities), "Popular cities " +
+                "of chosen country should be " + expectedCities);
     }
 
     /**
@@ -76,8 +70,9 @@ public class TestsBooking {
     @Test(dataProvider = "searchDataProvider")
     public void search(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
 
-        String searchArrivalDay = testUtils.getArrivalDay(arrivalDate);
-        String searchDepartureDay = testUtils.getDepartureDay(departureDate);
+        String searchArrivalDay = TestUtils.getArrivalDay(arrivalDate);
+        String searchDepartureDay = TestUtils.getDepartureDay(departureDate);
+        List<String> expectedHistoryParameters = Arrays.asList(rooms, adults, children);
 
         mainPage.search(place, arrivalDate, departureDate, rooms, adults, children);
         Assert.assertTrue(searchHotelsResultsPage.getSearchRoomsNumber().contains(rooms),
@@ -86,7 +81,7 @@ public class TestsBooking {
                 "Quantity of searched adults number should be " + adults);
         Assert.assertTrue(searchHotelsResultsPage.getSearchChildrenNumber().contains(children),
                 "Quantity of searched children number should be " + children);
-        
+
         searchHotelsResultsPage.returnToMainPage();
         Assert.assertEquals(mainPage.getHistoryText(), "Еще хотите побывать в городе " + place + "?",
                 "Place in search history should be " + place);
@@ -95,13 +90,24 @@ public class TestsBooking {
         Assert.assertTrue(mainPage.getHistoryDates().contains(searchDepartureDay),
                 "Departure date in search history should be " + searchDepartureDay);
 
+        Assert.assertEquals(TestUtils.historyParameters(mainPage.getHistoryParameters()), expectedHistoryParameters,
+                "History parameters should be " + expectedHistoryParameters);
+
     }
+
+    /**
+     * 4. Я могу узнать, что Lufthansa летает из Минска в Барселону с датой вылета 25.12 и обратной датой 29.12.
+     */
+//    @Test
+//    public void checkPlaneFlight(){
+//        mainPage.goToFlightsPage();
+//    }
 
     @DataProvider
     public Object[][] changeCurrencyDataProvider(){
         return new Object[][] {
                 {"Польский злотый", "zł"},
-                {"Катарский риал", "QAR"}
+                {"Катарский риал", "QAR"},
         };
     }
 
@@ -109,7 +115,7 @@ public class TestsBooking {
     public Object[][] searchDataProvider(){
         return new Object[][] {
                 {"Барселона", "2018-12-29", "2019-01-12", "3", "6", "2"},
-                {"Лос-Анджелес", "2018-12-30", "2019-01-09", "1", "8", "3"}
+                {"Лос-Анджелес", "2018-12-30", "2019-01-09", "1", "8", "3"},
         };
     }
 
@@ -123,6 +129,14 @@ public class TestsBooking {
 //                {buildExpectedPopularCities()}
 //        };
 //    }
+
+        @DataProvider
+    public Object[][] checkPopularCitiesDataProvider(){
+        return new Object[][] {
+                {"Испания", Arrays.asList("Барселона", "Валенсия", "Мадрид")},
+                {"Италия", Arrays.asList("Флоренция", "Рим")},
+        };
+    }
 
 
 }

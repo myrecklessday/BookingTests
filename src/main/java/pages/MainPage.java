@@ -16,11 +16,13 @@ public class MainPage extends PageBase {
         super(driver);
     }
 
+    private SearchField searchField = new SearchField(driver);
+
     @FindBy(css = ".uc_language")
     private WebElement languageSelector;
 
-    @FindBy(xpath = "//li[contains(@class, 'uc_language')]//img")
-    private WebElement languageImageTitle;
+    @FindBy(xpath = "/html")
+    private WebElement pageLanguage;
 
     @FindBy(css = ".uc_currency")
     private WebElement currencySelector;
@@ -43,23 +45,27 @@ public class MainPage extends PageBase {
     @FindBy(xpath = "//td[@class = 'sh-postcard-dates']/a")
     private WebElement historyDates;
 
-    private String languageName = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
-    private String currencyName = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
-    private String learnMoreCountryName = "//li[contains(@class, 'dcbi-country')]/a[contains(text(), 'LearnMoreCountryName')]";
+    @FindBy(xpath = "//td[@class = 'sh-postcard-rooms']")
+    private WebElement historyParameters;
+
+    private final static String LANGUAGE_NAME_XPATH = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
+    private final static String CURRENCY_NAME_XPATH = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
+    private final static String LEARN_MORE_COUNTRY_NAME_XPATH = "//li[contains(@class, 'dcbi-country')]/a[contains(text(), 'LearnMoreCountryName')]";
+    private final static String MAIN_MENU_ITEMS_XPATH = "//a[@class = 'xpb__link']/span[text() = 'MainMenuItem']";
 
     public void changeLanguage(String language){
         languageSelector.click();
-        String languageItem = languageName.replace("LanguageName", language);
+        String languageItem = LANGUAGE_NAME_XPATH.replace("LanguageName", language);
         searchElement(By.xpath(languageItem)).click();
     }
 
-    public String getLanguageImageTitle(){
-        return languageImageTitle.getAttribute("alt");
+    public String getLanguageTitle(){
+        return pageLanguage.getAttribute("lang");
     }
 
     public void changeCurrency(String currency){
         currencySelector.click();
-        String currencyNameItem = currencyName.replace("CurrencyName", currency);
+        String currencyNameItem = CURRENCY_NAME_XPATH.replace("CurrencyName", currency);
         searchElement(By.xpath(currencyNameItem)).click();
     }
 
@@ -68,7 +74,7 @@ public class MainPage extends PageBase {
     }
 
     public boolean isRecommendedDirectionsCurrencyCorrect(String currencySymbol){
-        for (WebElement recommendedDirectionPrice:recommendedDirectionsPrices) {
+        for (WebElement recommendedDirectionPrice : recommendedDirectionsPrices) {
             if (!recommendedDirectionPrice.getText().contains(currencySymbol)){
                 return false;
             }
@@ -82,12 +88,11 @@ public class MainPage extends PageBase {
 
     public void goToPopularCitiesPage(String countryName){
         scrollDown();
-        String learnMoreCountryNameItem = learnMoreCountryName.replace("LearnMoreCountryName", countryName);
+        String learnMoreCountryNameItem = LEARN_MORE_COUNTRY_NAME_XPATH.replace("LearnMoreCountryName", countryName);
         searchElement(By.xpath(learnMoreCountryNameItem)).click();
     }
 
     public void search(String place, String arrivalDate, String departureDate, String rooms, String adults, String children) {
-        SearchField searchField = new SearchField(driver);
         searchField.initSearch(place, arrivalDate, departureDate, rooms, adults, children);
     }
 
@@ -97,6 +102,15 @@ public class MainPage extends PageBase {
 
     public String getHistoryDates(){
         return historyDates.getText();
+    }
+
+    public String getHistoryParameters(){
+        return historyParameters.getText();
+    }
+
+    public void goToFlightsPage(){
+        String flightsMenuItem = MAIN_MENU_ITEMS_XPATH.replace("MainMenuItem", "Авиабилеты");
+        searchElement(By.xpath(flightsMenuItem)).click();
     }
 
 }

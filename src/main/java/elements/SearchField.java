@@ -13,7 +13,8 @@ public class SearchField {
         this.driver = driver;
     }
 
-    private static By searchButton_locator = By.className("sb-searchbox__button");
+    //TODO: make final and uppercase
+    private static final By searchButton_locator = By.className("sb-searchbox__button");
     private static By searchField_locator = By.id("ss");
     private static By datesField_locator = By.cssSelector(".xp__dates");
     private static By guestsField_locator = By.id("xp__guests__toggle");
@@ -28,7 +29,6 @@ public class SearchField {
         driver.findElement(datesField_locator).click();
         driver.findElement(By.xpath(dates_locator.replace("Date", arrivalDate))).click();
         driver.findElement(By.xpath(dates_locator.replace("Date", departureDate))).click();
-
     }
 
     private void chooseGuests(String rooms, String adults, String children){
