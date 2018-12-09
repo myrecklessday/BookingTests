@@ -32,8 +32,8 @@ public class SearchFlightsForm {
     private static final By ARRIVAL_AIRPORTS_LIST_LOCATOR =
             By.xpath("//div[contains(@id, 'destination-smartbox-dropdown')]//li");
 
-    public WebElement waitForElementVisible(WebElement element){
-        return wait.until(ExpectedConditions.visibilityOf(element));
+    private void waitForElementVisible(WebElement element){
+        wait.until(ExpectedConditions.visibilityOf(element));
     }
 
     private void selectDates(String departureDateStr, String arrivalDateStr) throws ParseException {
@@ -75,16 +75,10 @@ public class SearchFlightsForm {
         arrivalAirportsList.get(0).click();
     }
 
-    //TODO: delete sleep (needed to do captcha)
     public void initSearch(String departureCity, String arrivalCity, String departureDateStr, String arrivalDateStr) throws ParseException {
         selectCities(departureCity, arrivalCity);
         selectDates(departureDateStr, arrivalDateStr);
         driver.findElement(SEARCH_BUTTON_LOCATOR).click();
-        try {
-            Thread.sleep(120000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
 

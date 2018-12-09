@@ -1,4 +1,3 @@
-import elements.SearchFlightsForm;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
@@ -72,8 +71,8 @@ public class TestsBooking {
     /**
      * 3. Я могу увидеть на главной странице результат предыдущего поиска.
      */
-    @Test(dataProvider = "searchDataProvider")
-    public void search(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
+    @Test(dataProvider = "checkSearchHistoryDataProvider")
+    public void checkSearchHistory(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
 
         String searchArrivalDay = TestUtils.getArrivalDay(arrivalDate);
         String searchDepartureDay = TestUtils.getDepartureDay(departureDate);
@@ -113,6 +112,23 @@ public class TestsBooking {
                 "Search result should contain " + carrier);
     }
 
+    /**
+     * 5. Я могу найти хотя бы 2 отеля в Барселоне с оценкой "Очень хорошо",
+     * с бесплатной отменой бронирования, на даты 25.12 - 29.12.
+     */
+    @Test(dataProvider = "findGoodHotelsDataProvider")
+    public void findGoodHotels(String place, String arrivalDate, String departureDate, String rooms, String adults,
+                               String children, String childrenAge){
+        mainPage.search(place, arrivalDate, departureDate, rooms, adults, children, childrenAge);
+
+        searchHotelsResultsPage.chooseFilterOption("Очень хорошо: 8+");
+        searchHotelsResultsPage.chooseFilterOption("Бесплатная отмена бронирования");
+
+        System.out.println(TestUtils.foundHotelsNumber(searchHotelsResultsPage.getSearchHeader()));
+        Assert.assertNotEquals(TestUtils.foundHotelsNumber(searchHotelsResultsPage.getSearchHeader()), 2,
+                "Found hotels number should be at least 2");
+    }
+
     @DataProvider
     public Object[][] changeCurrencyDataProvider(){
         return new Object[][] {
@@ -122,7 +138,7 @@ public class TestsBooking {
     }
 
     @DataProvider
-    public Object[][] searchDataProvider(){
+    public Object[][] checkSearchHistoryDataProvider(){
         return new Object[][] {
                 {"Барселона", "2018-12-29", "2019-01-12", "3", "6", "2"},
                 {"Барселона", "2018-12-30", "2019-01-09", "1", "8", "3"},
@@ -141,6 +157,13 @@ public class TestsBooking {
     public Object[][] checkPlaneFlightDataProvider(){
         return new Object[][] {
                 {"Минск", "Барселона", "2018-12-25", "2018-12-29", "Lufthansa"},
+        };
+    }
+
+    @DataProvider
+    public Object[][] findGoodHotelsDataProvider(){
+        return new Object[][] {
+                {"Барселона", "2018-12-25", "2018-12-29", "1", "2", "1", "2"},
         };
     }
 

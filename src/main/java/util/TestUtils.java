@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class TestUtils {
 
+    private static Pattern numberRegex = Pattern.compile("\\d+");
     //TODO: refactor using SimpleDateFormat
 
     public static String getArrivalDay(String arrivalDate){
@@ -29,8 +30,8 @@ public class TestUtils {
         return departureDay;
     }
 
+
     public static List<String> historyParameters(String roomGuestsStr){
-        Pattern numberRegex = Pattern.compile("\\d+");
         Matcher matcher = numberRegex.matcher(roomGuestsStr);
         List<String> results = new ArrayList<String>();
         while (matcher.find()) {
@@ -38,6 +39,15 @@ public class TestUtils {
         }
 
         return results;
+    }
+
+    public static String foundHotelsNumber(String searchHeader){
+        Matcher matcher = numberRegex.matcher(searchHeader);
+        String result = "";
+        while (matcher.find()) {
+            result = matcher.group(0);
+        }
+        return result;
     }
 
     public static void switchToNewTab(WebDriver driver){

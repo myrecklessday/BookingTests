@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SearchHotelsForm {
     private WebDriver driver;
@@ -21,6 +22,9 @@ public class SearchHotelsForm {
     private static By roomsNumber_locator = By.id("no_rooms");
     private static By adultsNumber_locator = By.id("group_adults");
     private static By childrenNumber_locator = By.id("group_children");
+    private static final By ADD_CHILDREN_BUTTON =
+            By.xpath("//div[contains(@class, 'sb-group-children')]//button[contains(@class, 'stepper__add-button')]");
+    private static final By CHILDREN_AGE_LOCATOR = By.name("age");
 
     private static String dates_locator = "//td[@data-date = 'Date']";
 
@@ -51,6 +55,15 @@ public class SearchHotelsForm {
         }
     }
 
+    private void chooseChildrenAge(String age) {
+        //elements for choosing quantity can have type select or type input range after tests launch
+        if (!driver.findElement(roomsNumber_locator).getTagName().contentEquals("select")) {
+            driver.findElement(ADD_CHILDREN_BUTTON).click();
+        }
+        Select childAgeDropdown = new Select(driver.findElement(CHILDREN_AGE_LOCATOR));
+        childAgeDropdown.selectByValue(age);
+    }
+
     public void initSearch(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
         WebElement searchField = driver.findElement(searchField_locator);
         if (!searchField.getAttribute("value").equals("")){
@@ -59,6 +72,19 @@ public class SearchHotelsForm {
         searchField.sendKeys(place);
         chooseDates(arrivalDate, departureDate);
         chooseGuests(rooms, adults, children);
+        driver.findElement(searchButton_locator).click();
+    }
+
+    public void initSearch(String place, String arrivalDate, String departureDate, String rooms, String adults,
+                           String children, String childrenAge){
+        WebElement searchField = driver.findElement(searchField_locator);
+        if (!searchField.getAttribute("value").equals("")){
+            searchField.clear();
+        }
+        searchField.sendKeys(place);
+        chooseDates(arrivalDate, departureDate);
+        chooseGuests(rooms, adults, children);
+        chooseChildrenAge(childrenAge);
         driver.findElement(searchButton_locator).click();
     }
 

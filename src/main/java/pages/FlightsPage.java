@@ -2,7 +2,6 @@ package pages;
 
 import base.PageBase;
 import elements.SearchFlightsForm;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindAll;
@@ -28,9 +27,6 @@ public class FlightsPage extends PageBase {
     }
 
     public List<String> getFoundCarriers(){
-//        return searchElement(By.xpath(String.format(FOUND_CARRIERS, carrier))).getText();
-//        return searchElement(By.xpath(String.format(FOUND_CARRIERS, carrier))).getText();
-
         List<String> foundCarriersList = new ArrayList<String>();
         for (WebElement foundCarrier: foundCarriers) {
             foundCarriersList.add(foundCarrier.getText());

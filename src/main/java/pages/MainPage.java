@@ -96,6 +96,11 @@ public class MainPage extends PageBase {
         searchHotelsForm.initSearch(place, arrivalDate, departureDate, rooms, adults, children);
     }
 
+    public void search(String place, String arrivalDate, String departureDate, String rooms, String adults,
+                       String children, String childrenAge) {
+        searchHotelsForm.initSearch(place, arrivalDate, departureDate, rooms, adults, children, childrenAge);
+    }
+
     public String getHistoryText(){
         return historyText.getText();
     }
