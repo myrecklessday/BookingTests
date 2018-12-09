@@ -5,7 +5,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SearchHotelsForm {
     private WebDriver driver;
@@ -14,37 +13,36 @@ public class SearchHotelsForm {
         this.driver = driver;
     }
 
-    //TODO: make final and uppercase
-    private static final By searchButton_locator = By.className("sb-searchbox__button");
-    private static By searchField_locator = By.id("ss");
-    private static By datesField_locator = By.cssSelector(".xp__dates");
-    private static By guestsField_locator = By.id("xp__guests__toggle");
-    private static By roomsNumber_locator = By.id("no_rooms");
-    private static By adultsNumber_locator = By.id("group_adults");
-    private static By childrenNumber_locator = By.id("group_children");
+    private static final By SEARCH_BUTTON_LOCATOR = By.className("sb-searchbox__button");
+    private static final By SEARCH_FIELD_LOCATOR = By.id("ss");
+    private static final By DATES_FIELD_LOCATOR = By.cssSelector(".xp__dates");
+    private static final By GUESTS_FIELD_LOCATOR = By.id("xp__guests__toggle");
+    private static final By ROOMS_NUMBER_LOCATOR = By.id("no_rooms");
+    private static final By ADULTS_NUMBER_LOCATOR = By.id("group_adults");
+    private static final By CHILDREN_NUMBER_LOCATOR = By.id("group_children");
     private static final By ADD_CHILDREN_BUTTON =
             By.xpath("//div[contains(@class, 'sb-group-children')]//button[contains(@class, 'stepper__add-button')]");
     private static final By CHILDREN_AGE_LOCATOR = By.name("age");
 
-    private static String dates_locator = "//td[@data-date = 'Date']";
+    private static final String DATES_LOCATOR = "//td[@data-date = 'Date']";
 
 
     private void chooseDates(String arrivalDate, String departureDate){
-        driver.findElement(datesField_locator).click();
-        driver.findElement(By.xpath(dates_locator.replace("Date", arrivalDate))).click();
-        driver.findElement(By.xpath(dates_locator.replace("Date", departureDate))).click();
+        driver.findElement(DATES_FIELD_LOCATOR).click();
+        driver.findElement(By.xpath(DATES_LOCATOR.replace("Date", arrivalDate))).click();
+        driver.findElement(By.xpath(DATES_LOCATOR.replace("Date", departureDate))).click();
     }
 
     private void chooseGuests(String rooms, String adults, String children){
-        driver.findElement(guestsField_locator).click();
+        driver.findElement(GUESTS_FIELD_LOCATOR).click();
 
         //elements for choosing quantity can have type select or type input range after tests launch
-        if (driver.findElement(roomsNumber_locator).getTagName().contentEquals("select")) {
-            Select roomsDropdown = new Select(driver.findElement(roomsNumber_locator));
+        if (driver.findElement(ROOMS_NUMBER_LOCATOR).getTagName().contentEquals("select")) {
+            Select roomsDropdown = new Select(driver.findElement(ROOMS_NUMBER_LOCATOR));
             roomsDropdown.selectByVisibleText(rooms);
-            Select adultsDropdown = new Select(driver.findElement(adultsNumber_locator));
+            Select adultsDropdown = new Select(driver.findElement(ADULTS_NUMBER_LOCATOR));
             adultsDropdown.selectByVisibleText(adults);
-            Select childrenDropdown = new Select(driver.findElement(childrenNumber_locator));
+            Select childrenDropdown = new Select(driver.findElement(CHILDREN_NUMBER_LOCATOR));
             childrenDropdown.selectByVisibleText(children);
         } else {
             JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -57,7 +55,7 @@ public class SearchHotelsForm {
 
     private void chooseChildrenAge(String age) {
         //elements for choosing quantity can have type select or type input range after tests launch
-        if (!driver.findElement(roomsNumber_locator).getTagName().contentEquals("select")) {
+        if (!driver.findElement(ROOMS_NUMBER_LOCATOR).getTagName().contentEquals("select")) {
             driver.findElement(ADD_CHILDREN_BUTTON).click();
         }
         Select childAgeDropdown = new Select(driver.findElement(CHILDREN_AGE_LOCATOR));
@@ -65,19 +63,19 @@ public class SearchHotelsForm {
     }
 
     public void initSearch(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
-        WebElement searchField = driver.findElement(searchField_locator);
+        WebElement searchField = driver.findElement(SEARCH_FIELD_LOCATOR);
         if (!searchField.getAttribute("value").equals("")){
             searchField.clear();
         }
         searchField.sendKeys(place);
         chooseDates(arrivalDate, departureDate);
         chooseGuests(rooms, adults, children);
-        driver.findElement(searchButton_locator).click();
+        driver.findElement(SEARCH_BUTTON_LOCATOR).click();
     }
 
     public void initSearch(String place, String arrivalDate, String departureDate, String rooms, String adults,
                            String children, String childrenAge){
-        WebElement searchField = driver.findElement(searchField_locator);
+        WebElement searchField = driver.findElement(SEARCH_FIELD_LOCATOR);
         if (!searchField.getAttribute("value").equals("")){
             searchField.clear();
         }
@@ -85,7 +83,7 @@ public class SearchHotelsForm {
         chooseDates(arrivalDate, departureDate);
         chooseGuests(rooms, adults, children);
         chooseChildrenAge(childrenAge);
-        driver.findElement(searchButton_locator).click();
+        driver.findElement(SEARCH_BUTTON_LOCATOR).click();
     }
 
 }

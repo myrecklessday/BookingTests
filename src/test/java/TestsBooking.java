@@ -17,6 +17,7 @@ public class TestsBooking {
     private SearchHotelsResultsPage searchHotelsResultsPage;
     private FlightsPage flightsPage;
     private RentApartmentsPage rentApartmentsPage;
+    private HotelPage hotelPage;
 
     @BeforeClass
     public void start() {
@@ -28,6 +29,7 @@ public class TestsBooking {
         searchHotelsResultsPage = new SearchHotelsResultsPage(driver);
         flightsPage = new FlightsPage(driver);
         rentApartmentsPage = new RentApartmentsPage(driver);
+        hotelPage = new HotelPage(driver);
     }
 
     @BeforeMethod
@@ -70,8 +72,8 @@ public class TestsBooking {
     /**
      * 3. Я могу увидеть на главной странице результат предыдущего поиска.
      */
-    @Test(dataProvider = "checkSearchHistoryDataProvider")
-    public void checkSearchHistory(String place, String arrivalDate, String departureDate, String rooms, String adults, String children){
+    @Test(dataProvider = "checkSearchDataProvider")
+    public void checkSearchHistory(String place, String arrivalDate, String departureDate, String rooms, String adults, String children) throws ParseException {
 
         String searchArrivalDay = TestUtils.getArrivalDay(arrivalDate);
         String searchDepartureDay = TestUtils.getDepartureDay(departureDate);
@@ -135,11 +137,25 @@ public class TestsBooking {
     public void checkProfitCalculation(String pricePerNight){
         mainPage.goToRentApartmentsPage();
         TestUtils.switchToNewTab(driver);
-        System.out.println(rentApartmentsPage.calculateProfit(pricePerNight));
         Assert.assertEquals(TestUtils.getCalculatedSum(rentApartmentsPage.calculateProfit(pricePerNight)),
                 TestUtils.rentCalculation(pricePerNight),
                 "Price per night should be " + TestUtils.rentCalculation(pricePerNight));
+    }
 
+    /**
+     * 7. Я могу убедиться, что в отеле с результатом поиска
+     * "Чуть-чуть не успели! Наш последний номер был продан..." действительно нет мест на выбранные даты.
+     */
+    @Test(dataProvider = "checkSearchDataProvider")
+    public void noRoomsCheck(String place, String arrivalDate, String departureDate, String rooms, String adults,
+                             String children){
+        mainPage.search(place, arrivalDate, departureDate, rooms, adults, children);
+
+        searchHotelsResultsPage.goToHotelWithTakenRooms();
+        TestUtils.switchToNewTab(driver);
+
+        Assert.assertTrue(hotelPage.isRoomAlreadyTaken(),
+                "Chosen room should already be taken");
     }
 
     @DataProvider
@@ -151,7 +167,7 @@ public class TestsBooking {
     }
 
     @DataProvider
-    public Object[][] checkSearchHistoryDataProvider(){
+    public Object[][] checkSearchDataProvider(){
         return new Object[][] {
                 {"Барселона", "2018-12-29", "2019-01-12", "3", "6", "2"},
                 {"Барселона", "2018-12-30", "2019-01-09", "1", "8", "3"},

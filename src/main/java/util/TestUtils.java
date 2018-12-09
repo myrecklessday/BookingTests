@@ -3,36 +3,33 @@ package util;
 import org.openqa.selenium.WebDriver;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TestUtils {
 
-    private static Pattern numberRegex = Pattern.compile("\\d+");
-    //TODO: refactor using SimpleDateFormat
-
-    public static String getArrivalDay(String arrivalDate){
-        String[] splitArrivalDate = arrivalDate.split("-");
-        String arrivalDay = splitArrivalDate[2];
-        if (arrivalDay.substring(0, 1).contentEquals("0")){
-            return arrivalDay.substring(1);
-        }
-        return arrivalDay;
+    private static String getDayFromDate(String date) throws ParseException {
+        SimpleDateFormat defaultDateFormat =  new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dayDateFormat = new SimpleDateFormat("d");
+        Date getDay = defaultDateFormat.parse(date);
+        return dayDateFormat.format(getDay);
     }
 
-    public static String getDepartureDay(String departureDate){
-        String[] splitDepartureDate = departureDate.split("-");
-        String departureDay = splitDepartureDate[2];
-        if (departureDay.substring(0, 1).contentEquals("0")){
-            return departureDay.substring(1);
-        }
-        return departureDay;
+    public static String getArrivalDay(String arrivalDateStr) throws ParseException {
+        return getDayFromDate(arrivalDateStr);
     }
 
+    public static String getDepartureDay(String departureDateStr) throws ParseException {
+        return getDayFromDate(departureDateStr);
+    }
 
     public static List<String> historyParameters(String roomGuestsStr){
+        Pattern numberRegex = Pattern.compile("\\d+");
         Matcher matcher = numberRegex.matcher(roomGuestsStr);
         List<String> results = new ArrayList<String>();
         while (matcher.find()) {
@@ -43,6 +40,7 @@ public class TestUtils {
     }
 
     public static String foundHotelsNumber(String searchHeader){
+        Pattern numberRegex = Pattern.compile("\\d+");
         Matcher matcher = numberRegex.matcher(searchHeader);
         String result = "";
         while (matcher.find()) {
