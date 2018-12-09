@@ -2,10 +2,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import pages.CountryInfoPage;
-import pages.FlightsPage;
-import pages.MainPage;
-import pages.SearchHotelsResultsPage;
+import pages.*;
 import util.TestUtils;
 
 import java.text.ParseException;
@@ -19,6 +16,7 @@ public class TestsBooking {
     private CountryInfoPage countryInfoPage;
     private SearchHotelsResultsPage searchHotelsResultsPage;
     private FlightsPage flightsPage;
+    private RentApartmentsPage rentApartmentsPage;
 
     @BeforeClass
     public void start() {
@@ -29,6 +27,7 @@ public class TestsBooking {
         countryInfoPage = new CountryInfoPage(driver);
         searchHotelsResultsPage = new SearchHotelsResultsPage(driver);
         flightsPage = new FlightsPage(driver);
+        rentApartmentsPage = new RentApartmentsPage(driver);
     }
 
     @BeforeMethod
@@ -129,6 +128,20 @@ public class TestsBooking {
                 "Found hotels number should be at least 2");
     }
 
+    /**
+     * 6. Я могу проверить расчёт того, сколько я заработаю за месяц при регистрации своего объекта с ценой за ночь 234$.
+     */
+    @Test(dataProvider = "checkCalculationDataProvider")
+    public void checkProfitCalculation(String pricePerNight){
+        mainPage.goToRentApartmentsPage();
+        TestUtils.switchToNewTab(driver);
+        System.out.println(rentApartmentsPage.calculateProfit(pricePerNight));
+        Assert.assertEquals(TestUtils.getCalculatedSum(rentApartmentsPage.calculateProfit(pricePerNight)),
+                TestUtils.rentCalculation(pricePerNight),
+                "Price per night should be " + TestUtils.rentCalculation(pricePerNight));
+
+    }
+
     @DataProvider
     public Object[][] changeCurrencyDataProvider(){
         return new Object[][] {
@@ -164,6 +177,14 @@ public class TestsBooking {
     public Object[][] findGoodHotelsDataProvider(){
         return new Object[][] {
                 {"Барселона", "2018-12-25", "2018-12-29", "1", "2", "1", "2"},
+        };
+    }
+
+    @DataProvider
+    public Object[][] checkCalculationDataProvider(){
+        return new Object[][] {
+                {"234"},
+                {"545.89"},
         };
     }
 

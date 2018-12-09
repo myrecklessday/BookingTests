@@ -2,6 +2,7 @@ package util;
 
 import org.openqa.selenium.WebDriver;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -50,12 +51,27 @@ public class TestUtils {
         return result;
     }
 
+    public static String getCalculatedSum(String finalPrice){
+        Pattern numberRegex = Pattern.compile("\\$(.*)");
+        Matcher matcher = numberRegex.matcher(finalPrice);
+        String result = "";
+        while (matcher.find()) {
+            result = matcher.group(1);
+        }
+        return result.replaceAll("\\s+","");
+    }
+
     public static void switchToNewTab(WebDriver driver){
         ArrayList<String> tabs = new ArrayList<String> (driver.getWindowHandles());
         driver.close();
         driver.switchTo().window(tabs.get(1));
-        //driver.close();
-        //driver.switchTo().window(tabs2.get(0));
+    }
+
+    public static String rentCalculation(String pricePerNight){
+        double pricePerNightValue = Math.floor(Double.parseDouble(pricePerNight));
+        DecimalFormat f = new DecimalFormat("##.00");
+        String calculatedPrice = f.format((pricePerNightValue - pricePerNightValue * 0.15 )*18);
+        return calculatedPrice;
     }
 
 }

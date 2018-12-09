@@ -48,6 +48,9 @@ public class MainPage extends PageBase {
     @FindBy(xpath = "//td[@class = 'sh-postcard-rooms']")
     private WebElement historyParameters;
 
+    @FindBy(xpath = "//div[@class = 'bui-banner__content']/a")
+    private WebElement calculationPageLink;
+
     private final static String LANGUAGE_NAME_XPATH = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
     private final static String CURRENCY_NAME_XPATH = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
     private final static String LEARN_MORE_COUNTRY_NAME_XPATH = "//li[contains(@class, 'dcbi-country')]/a[contains(text(), 'LearnMoreCountryName')]";
@@ -82,12 +85,8 @@ public class MainPage extends PageBase {
         return true;
     }
 
-    private void scrollDown(){
-        new Actions(driver).moveToElement(footer).build().perform();
-    }
-
     public void goToPopularCitiesPage(String countryName){
-        scrollDown();
+        scrollDown(footer);
         String learnMoreCountryNameItem = LEARN_MORE_COUNTRY_NAME_XPATH.replace("LearnMoreCountryName", countryName);
         searchElement(By.xpath(learnMoreCountryNameItem)).click();
     }
@@ -116,6 +115,10 @@ public class MainPage extends PageBase {
     public void goToFlightsPage(){
         String flightsMenuItem = MAIN_MENU_ITEMS_XPATH.replace("MainMenuItem", "Авиабилеты");
         searchElement(By.xpath(flightsMenuItem)).click();
+    }
+
+    public void goToRentApartmentsPage(){
+        calculationPageLink.click();
     }
 
 }
