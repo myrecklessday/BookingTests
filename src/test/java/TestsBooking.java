@@ -1,12 +1,15 @@
+import elements.SearchFlightsForm;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.CountryInfoPage;
+import pages.FlightsPage;
 import pages.MainPage;
 import pages.SearchHotelsResultsPage;
 import util.TestUtils;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +19,7 @@ public class TestsBooking {
     private MainPage mainPage;
     private CountryInfoPage countryInfoPage;
     private SearchHotelsResultsPage searchHotelsResultsPage;
+    private FlightsPage flightsPage;
 
     @BeforeClass
     public void start() {
@@ -25,6 +29,7 @@ public class TestsBooking {
         mainPage = new MainPage(driver);
         countryInfoPage = new CountryInfoPage(driver);
         searchHotelsResultsPage = new SearchHotelsResultsPage(driver);
+        flightsPage = new FlightsPage(driver);
     }
 
     @BeforeMethod
@@ -98,10 +103,15 @@ public class TestsBooking {
     /**
      * 4. Я могу узнать, что Lufthansa летает из Минска в Барселону с датой вылета 25.12 и обратной датой 29.12.
      */
-//    @Test
-//    public void checkPlaneFlight(){
-//        mainPage.goToFlightsPage();
-//    }
+    @Test(dataProvider = "checkPlaneFlightDataProvider")
+    public void checkPlaneFlight(String departureCity, String arrivalCity, String departureDate,
+                                 String arrivalDate, String carrier) throws ParseException {
+        mainPage.goToFlightsPage();
+        TestUtils.switchToNewTab(driver);
+        flightsPage.searchFlights(departureCity, arrivalCity, departureDate, arrivalDate);
+        Assert.assertTrue(flightsPage.getFoundCarriers().contains(carrier),
+                "Search result should contain " + carrier);
+    }
 
     @DataProvider
     public Object[][] changeCurrencyDataProvider(){
@@ -115,26 +125,22 @@ public class TestsBooking {
     public Object[][] searchDataProvider(){
         return new Object[][] {
                 {"Барселона", "2018-12-29", "2019-01-12", "3", "6", "2"},
-                {"Лос-Анджелес", "2018-12-30", "2019-01-09", "1", "8", "3"},
+                {"Барселона", "2018-12-30", "2019-01-09", "1", "8", "3"},
         };
     }
-
-//    private List<String> buildExpectedPopularCities(){
-//         return Collections.unmodifiableList("Барселона", "Валенсия", "Мадрид");
-//    }
-//
-//    @DataProvider
-//    public Object[][] checkSpainPopularCitiesDataProvider(){
-//        return new Object[][] {
-//                {buildExpectedPopularCities()}
-//        };
-//    }
 
         @DataProvider
     public Object[][] checkPopularCitiesDataProvider(){
         return new Object[][] {
                 {"Испания", Arrays.asList("Барселона", "Валенсия", "Мадрид")},
                 {"Италия", Arrays.asList("Флоренция", "Рим")},
+        };
+    }
+
+    @DataProvider
+    public Object[][] checkPlaneFlightDataProvider(){
+        return new Object[][] {
+                {"Минск", "Барселона", "2018-12-25", "2018-12-29", "Lufthansa"},
         };
     }
 

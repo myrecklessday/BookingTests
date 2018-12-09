@@ -1,7 +1,7 @@
 package pages;
 
 import base.PageBase;
-import elements.SearchField;
+import elements.SearchHotelsForm;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,7 +16,7 @@ public class MainPage extends PageBase {
         super(driver);
     }
 
-    private SearchField searchField = new SearchField(driver);
+    private SearchHotelsForm searchHotelsForm = new SearchHotelsForm(driver);
 
     @FindBy(css = ".uc_language")
     private WebElement languageSelector;
@@ -93,7 +93,7 @@ public class MainPage extends PageBase {
     }
 
     public void search(String place, String arrivalDate, String departureDate, String rooms, String adults, String children) {
-        searchField.initSearch(place, arrivalDate, departureDate, rooms, adults, children);
+        searchHotelsForm.initSearch(place, arrivalDate, departureDate, rooms, adults, children);
     }
 
     public String getHistoryText(){

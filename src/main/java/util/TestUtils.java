@@ -1,13 +1,15 @@
 package util;
 
+import org.openqa.selenium.WebDriver;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.regex.Pattern.compile;
-
 public class TestUtils {
+
+    //TODO: refactor using SimpleDateFormat
 
     public static String getArrivalDay(String arrivalDate){
         String[] splitArrivalDate = arrivalDate.split("-");
@@ -37,4 +39,13 @@ public class TestUtils {
 
         return results;
     }
+
+    public static void switchToNewTab(WebDriver driver){
+        ArrayList<String> tabs = new ArrayList<String> (driver.getWindowHandles());
+        driver.close();
+        driver.switchTo().window(tabs.get(1));
+        //driver.close();
+        //driver.switchTo().window(tabs2.get(0));
+    }
+
 }

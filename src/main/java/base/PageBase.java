@@ -16,4 +16,5 @@ public class PageBase {
     protected WebElement searchElement(By by){
         return driver.findElement(by);
     }
+
 }

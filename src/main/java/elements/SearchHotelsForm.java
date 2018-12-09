@@ -6,10 +6,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-public class SearchField {
+public class SearchHotelsForm {
     private WebDriver driver;
 
-    public SearchField(WebDriver driver){
+    public SearchHotelsForm(WebDriver driver){
         this.driver = driver;
     }
 
