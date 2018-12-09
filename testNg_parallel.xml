@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Default Suite" parallel="tests">
+    <test name="BookingTests_Parallel_Run1">
+        <parameter name="Browser" value="grid_chrome"/>
+        <classes>
+            <class name="TestsBooking">
+                <methods>
+                    <include name="changeCurrencyTest"/>
+                    <include name="checkPopularCities"/>
+                    <include name="checkSearchHistory"/>
+                </methods>
+            </class> <!-- TestsBooking -->
+        </classes>
+    </test> <!-- BookingTests -->
+
+    <test name="BookingTests_Parallel_Run2">
+        <parameter name="Browser" value="grid_chrome"/>
+        <classes>
+            <class name="TestsBooking">
+                <methods>
+                    <exclude name="changeCurrencyTest"/>
+                    <exclude name="checkPopularCities"/>
+                    <exclude name="checkSearchHistory"/>
+                </methods>
+            </class> <!-- TestsBooking -->
+        </classes>
+    </test> <!-- BookingTests -->
+</suite> <!-- Default Suite -->

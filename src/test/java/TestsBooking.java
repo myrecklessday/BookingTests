@@ -1,10 +1,15 @@
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.*;
 import util.TestUtils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +24,27 @@ public class TestsBooking {
     private RentApartmentsPage rentApartmentsPage;
     private HotelPage hotelPage;
 
+    private void setUpBrowser(String browserName) {
+        if (browserName == null || !browserName.equals("")) {
+            driver = new ChromeDriver();
+        }
+        else if (browserName.contentEquals("grid_chrome")){
+            String url = "http://192.168.0.102:4444/wd/hub";
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setBrowserName("chrome");
+            capabilities.setPlatform(Platform.WIN8);
+            try {
+                driver = new RemoteWebDriver(new URL(url), capabilities);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @BeforeClass
-    public void start() {
-        driver = new ChromeDriver();
+    @Parameters({"BrowserName"})
+    public void start(@Optional String browserName) {
+        setUpBrowser(browserName);
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         mainPage = new MainPage(driver);
@@ -108,6 +131,9 @@ public class TestsBooking {
                                  String arrivalDate, String carrier) throws ParseException {
         mainPage.goToFlightsPage();
         TestUtils.switchToNewTab(driver);
+        //Asserting url because there can be captcha
+        Assert.assertTrue(driver.getCurrentUrl().contains("https://booking.kayak.com/flights"),
+                "Current url should contain  https://booking.kayak.com/flights");
         flightsPage.searchFlights(departureCity, arrivalCity, departureDate, arrivalDate);
         Assert.assertTrue(flightsPage.getFoundCarriers().contains(carrier),
                 "Search result should contain " + carrier);
