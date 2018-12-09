@@ -150,9 +150,9 @@ public class TestsBooking {
 
         searchHotelsResultsPage.chooseFilterOption("Очень хорошо: 8+");
         searchHotelsResultsPage.chooseFilterOption("Бесплатная отмена бронирования");
+        int hotelsNumber = TestUtils.foundHotelsNumber(searchHotelsResultsPage.getSearchHeader());
 
-        System.out.println(TestUtils.foundHotelsNumber(searchHotelsResultsPage.getSearchHeader()));
-        Assert.assertNotEquals(TestUtils.foundHotelsNumber(searchHotelsResultsPage.getSearchHeader()), 2,
+        Assert.assertTrue(hotelsNumber >= 2,
                 "Found hotels number should be at least 2");
     }
 

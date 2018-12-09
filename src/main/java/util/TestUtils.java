@@ -39,14 +39,14 @@ public class TestUtils {
         return results;
     }
 
-    public static String foundHotelsNumber(String searchHeader){
+    public static int foundHotelsNumber(String searchHeader){
         Pattern numberRegex = Pattern.compile("\\d+");
         Matcher matcher = numberRegex.matcher(searchHeader);
         String result = "";
         while (matcher.find()) {
             result = matcher.group(0);
         }
-        return result;
+        return Integer.parseInt(result);
     }
 
     public static String getCalculatedSum(String finalPrice){
