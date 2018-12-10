@@ -8,6 +8,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 public class PageBase {
     protected WebDriver driver;
     private WebDriverWait wait;
@@ -24,6 +26,9 @@ public class PageBase {
 
     protected WebElement searchElement(By by){
         return driver.findElement(by);
+    }
+    protected List<WebElement> searchElements(By by){
+        return driver.findElements(by);
     }
 
     protected void scrollDown(WebElement webElement){

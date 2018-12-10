@@ -24,13 +24,13 @@ public class SearchHotelsForm {
             By.xpath("//div[contains(@class, 'sb-group-children')]//button[contains(@class, 'stepper__add-button')]");
     private static final By CHILDREN_AGE_LOCATOR = By.name("age");
 
-    private static final String DATES_LOCATOR = "//td[@data-date = 'Date']";
+    private static final String DATES_LOCATOR = "//td[@data-date = '%s']";
 
 
     private void chooseDates(String arrivalDate, String departureDate){
         driver.findElement(DATES_FIELD_LOCATOR).click();
-        driver.findElement(By.xpath(DATES_LOCATOR.replace("Date", arrivalDate))).click();
-        driver.findElement(By.xpath(DATES_LOCATOR.replace("Date", departureDate))).click();
+        driver.findElement(By.xpath(String.format(DATES_LOCATOR, arrivalDate))).click();
+        driver.findElement(By.xpath(String.format(DATES_LOCATOR, departureDate))).click();
     }
 
     private void chooseGuests(String rooms, String adults, String children){

@@ -39,9 +39,6 @@ public class SearchHotelsResultsPage extends PageBase {
     @FindAll({@FindBy (xpath = ".//span[contains(@class, 'sr-hotel__name')]")})
     private List<WebElement> foundHotelsTitles;
 
-    @FindBy(id = "booking-footer")
-    private WebElement footer;
-
     @FindAll({@FindBy (xpath = ".//h3[contains(text(), 'не успели!')]")})
     private List<WebElement> alreadyTakenRooms;
 
@@ -51,9 +48,12 @@ public class SearchHotelsResultsPage extends PageBase {
     private static final String FILTER_NAME_LOCATOR =
             "//span[contains(@class, 'filter_label') and contains(text(), '%s')]";
 
-    private static final String FOUND_HOTELS_TITLES_RELATIVE_LOCATOR = ".//span[contains(@class, 'sr-hotel__name')]";
-    private static final String TAKEN_ROOM_LOCATOR =
-            "//div[contains(@class, 'sr_item_content')]//h3[contains(text(), 'не успели!')]";
+    private static final By FOUND_HOTELS_TITLES_LOCATOR = By.xpath(".//span[contains(@class, 'sr-hotel__name')]");
+    private static final By TAKEN_ROOM_LOCATOR = By.xpath(
+            "//div[contains(@class, 'sr_item_content')]//h3[contains(text(), 'не успели!')]");
+    private static final By FOUND_HOTELS_BLOCK_LOCATOR = By.xpath(
+            "ancestor::div[contains(@class, 'sr_item_content_slider_wrapper')]");
+
 
     public String getSearchAdultsNumber(){
         Select adultsDropdown = new Select(adultsNumber);
@@ -87,10 +87,11 @@ public class SearchHotelsResultsPage extends PageBase {
 
     public void goToHotelWithTakenRooms(){
         scrollDown(filterEnd);
-        driver.findElements(By.xpath(TAKEN_ROOM_LOCATOR)).get(0)
-                .findElement(By.xpath("ancestor::node()[6]"))
-                .findElement(By.xpath(FOUND_HOTELS_TITLES_RELATIVE_LOCATOR))
-                .click();
+        List<WebElement> hotelsWithTakenRoomsList = searchElements(TAKEN_ROOM_LOCATOR);
+        WebElement firstHotelWithTakenRooms = hotelsWithTakenRoomsList.get(0);
+        WebElement getTakenHotelBlock = firstHotelWithTakenRooms.findElement(FOUND_HOTELS_BLOCK_LOCATOR);
+        getTakenHotelBlock.findElement(FOUND_HOTELS_TITLES_LOCATOR).click();
     }
 
 }
+

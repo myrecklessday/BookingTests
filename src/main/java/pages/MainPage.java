@@ -50,14 +50,14 @@ public class MainPage extends PageBase {
     @FindBy(xpath = "//div[@class = 'bui-banner__content']/a")
     private WebElement calculationPageLink;
 
-    private final static String LANGUAGE_NAME_XPATH = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), 'LanguageName')]";
-    private final static String CURRENCY_NAME_XPATH = "//div[contains(@class, 'uc_currency')]//span[contains(text(), 'CurrencyName')]";
-    private final static String LEARN_MORE_COUNTRY_NAME_XPATH = "//li[contains(@class, 'dcbi-country')]/a[contains(text(), 'LearnMoreCountryName')]";
-    private final static String MAIN_MENU_ITEMS_XPATH = "//a[@class = 'xpb__link']/span[text() = 'MainMenuItem']";
+    private final static String LANGUAGE_NAME_XPATH = "//div[contains(@id, 'current_language_foldout')]//span[contains(text(), '%s')]";
+    private final static String CURRENCY_NAME_XPATH = "//div[contains(@class, 'uc_currency')]//span[contains(text(), '%s')]";
+    private final static String LEARN_MORE_COUNTRY_NAME_XPATH = "//li[contains(@class, 'dcbi-country')]/a[contains(text(), '%s')]";
+    private final static String MAIN_MENU_ITEMS_XPATH = "//a[@class = 'xpb__link']/span[text() = '%s']";
 
     public void changeLanguage(String language){
         languageSelector.click();
-        String languageItem = LANGUAGE_NAME_XPATH.replace("LanguageName", language);
+        String languageItem = String.format(LANGUAGE_NAME_XPATH, language);
         searchElement(By.xpath(languageItem)).click();
     }
 
@@ -67,7 +67,7 @@ public class MainPage extends PageBase {
 
     public void changeCurrency(String currency){
         currencySelector.click();
-        String currencyNameItem = CURRENCY_NAME_XPATH.replace("CurrencyName", currency);
+        String currencyNameItem = String.format(CURRENCY_NAME_XPATH, currency);
         searchElement(By.xpath(currencyNameItem)).click();
     }
 
@@ -86,7 +86,7 @@ public class MainPage extends PageBase {
 
     public void goToPopularCitiesPage(String countryName){
         scrollDown(footer);
-        String learnMoreCountryNameItem = LEARN_MORE_COUNTRY_NAME_XPATH.replace("LearnMoreCountryName", countryName);
+        String learnMoreCountryNameItem = String.format(LEARN_MORE_COUNTRY_NAME_XPATH, countryName);
         searchElement(By.xpath(learnMoreCountryNameItem)).click();
     }
 
@@ -112,7 +112,7 @@ public class MainPage extends PageBase {
     }
 
     public void goToFlightsPage(){
-        String flightsMenuItem = MAIN_MENU_ITEMS_XPATH.replace("MainMenuItem", "Авиабилеты");
+        String flightsMenuItem = String.format(MAIN_MENU_ITEMS_XPATH, "Авиабилеты");
         searchElement(By.xpath(flightsMenuItem)).click();
     }
 
