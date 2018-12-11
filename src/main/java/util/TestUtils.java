@@ -13,19 +13,11 @@ import java.util.regex.Pattern;
 
 public class TestUtils {
 
-    private static String getDayFromDate(String date) throws ParseException {
+    public static String getDayFromDate(String date) throws ParseException {
         SimpleDateFormat defaultDateFormat =  new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dayDateFormat = new SimpleDateFormat("d");
         Date getDay = defaultDateFormat.parse(date);
         return dayDateFormat.format(getDay);
-    }
-
-    public static String getArrivalDay(String arrivalDateStr) throws ParseException {
-        return getDayFromDate(arrivalDateStr);
-    }
-
-    public static String getDepartureDay(String departureDateStr) throws ParseException {
-        return getDayFromDate(departureDateStr);
     }
 
     public static List<String> historyParameters(String roomGuestsStr){
@@ -39,24 +31,25 @@ public class TestUtils {
         return results;
     }
 
-    public static int foundHotelsNumber(String searchHeader){
-        Pattern numberRegex = Pattern.compile("\\d+");
-        Matcher matcher = numberRegex.matcher(searchHeader);
+    private static String getRegexResult(String pattern, String stringToCheck, int groupNumber){
+        Pattern regExpression = Pattern.compile(pattern);
+        Matcher matcher = regExpression.matcher(stringToCheck);
         String result = "";
-        while (matcher.find()) {
-            result = matcher.group(0);
+        if (matcher.find()) {
+            result = matcher.group(groupNumber);
         }
-        return Integer.parseInt(result);
+        return result;
+    }
+
+
+    public static int foundHotelsNumber(String searchHeader){
+        String foundHotels = getRegexResult("\\d+", searchHeader, 0);
+        return Integer.parseInt(foundHotels);
     }
 
     public static String getCalculatedSum(String finalPrice){
-        Pattern numberRegex = Pattern.compile("\\$(.*)");
-        Matcher matcher = numberRegex.matcher(finalPrice);
-        String result = "";
-        while (matcher.find()) {
-            result = matcher.group(1);
-        }
-        return result.replaceAll("\\s+","");
+        String calculatedSum = getRegexResult("\\$(.*)", finalPrice, 1);
+        return calculatedSum.replaceAll("\\s+","");
     }
 
     public static void switchToNewTab(WebDriver driver){

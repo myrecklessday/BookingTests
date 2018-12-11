@@ -98,8 +98,8 @@ public class TestsBooking {
     @Test(dataProvider = "checkSearchDataProvider")
     public void checkSearchHistory(String place, String arrivalDate, String departureDate, String rooms, String adults, String children) throws ParseException {
 
-        String searchArrivalDay = TestUtils.getArrivalDay(arrivalDate);
-        String searchDepartureDay = TestUtils.getDepartureDay(departureDate);
+        String searchArrivalDay = TestUtils.getDayFromDate(arrivalDate);
+        String searchDepartureDay = TestUtils.getDayFromDate(departureDate);
         List<String> expectedHistoryParameters = Arrays.asList(rooms, adults, children);
 
         mainPage.search(place, arrivalDate, departureDate, rooms, adults, children);
